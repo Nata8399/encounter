@@ -238,8 +238,6 @@
       $('#levelTotal').textContent = LEVELS.length;
       $('#answer').value = '';
       $('#msg').textContent = '';
-      $('#hintText').classList.add('hidden');
-      $('#hintText').textContent = '';
       $('#hintTimer').textContent = '';
       $('#btnHint').disabled = true;
       show('#screen-level');
@@ -250,24 +248,26 @@
     }
 
     function submitAnswer(){
-      const val = normalize($('#answer').value);
-      const level = LEVELS[current];
-      const ok = (level.answers||[]).map(normalize).includes(val);
-      if(ok){
-        $('#msg').textContent = 'Верно!';
-        $('#msg').className = 'msg ok';
-        current += 1; saveProgress(current);
-        setTimeout(()=>{ current >= LEVELS.length ? finish() : openLevel(current); }, 350);
-      } else {
-        $('#msg').textContent = 'Неверный код';
-        $('#msg').className = 'msg error';
-      }
+  const val = normalize($('#answer').value);
+  const level = LEVELS[current];
+  const ok = (level.answers||[]).map(normalize).includes(val);
+  if(ok){
+    $('#msg').textContent = 'Верно!';
+    $('#msg').className = 'msg ok';
+    current += 1; 
+    saveProgress(current);
+    setTimeout(()=>{ 
+      if(current >= LEVELS.length) { 
+        finish(); 
+      } else { 
+        openLevel(current); 
+      } 
     }, 350);
-      } else {
-        $('#msg').textContent = 'Неверный код';
-        $('#msg').className = 'msg error';
-      }
-    }
+  } else {
+    $('#msg').textContent = 'Неверный код';
+    $('#msg').className = 'msg error';
+  }
+}
 
     function finish(){ show('#screen-finish'); }
 
@@ -279,8 +279,7 @@
     $('#btnBackHome').addEventListener('click', ()=>show('#screen-start'));
     $('#btnSubmit').addEventListener('click', submitAnswer);
     $('#answer').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ submitAnswer(); }});
-    $('#btnHint').addEventListener('click', ()=>{ revealNextHint(); }); }
-    });
+    $('#btnHint').addEventListener('click', revealNextHint);
     $('#btnReset').addEventListener('click', (e)=>{ e.preventDefault(); if(confirm('Сбросить прогресс?')){ resetProgress(); startNew(); }});
     $('#btnHow').addEventListener('click', ()=>{ const el=$('#howto'); el.style.display = (el.style.display==='none'||!el.style.display)?'block':'none'; });
 
